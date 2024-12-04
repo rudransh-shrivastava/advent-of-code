@@ -7,7 +7,7 @@ import (
 	"github.com/ryntak94/advent-of-code-go-starter/utils"
 )
 
-// Part 1: 1h 15m 0s ; Part 2:
+// Part 1: 1h 15m 0s ; Part 2: 18m 42s
 
 func main() {
 	file, err := utils.FileAsString("input.txt")
@@ -15,18 +15,154 @@ func main() {
 		fmt.Println(fmt.Errorf("input scanner: %w", err))
 	}
 	matrix := parseStringTo2DList(file)
-	fmt.Println(checkAll(matrix))
+	fmt.Println(checkAllXMAS(matrix))
+	fmt.Println(checkAllMAS(matrix))
 
 }
 
-func checkAll(matrix [][]string) int {
+func checkAllMAS(matrix [][]string) int {
+	count := 0
+	for i, row := range matrix {
+		for j, col := range row {
+			if col == "A" {
+				// fmt.Println("checking... ", i, j)
+				count += checkMAS(i, j, matrix)
+				// fmt.Println("count...", count)
+			}
+		}
+	}
+	return count
+}
+
+func checkMAS(i int, j int, matrix [][]string) int {
+	if i < 1 || j < 1 || i > len(matrix)-2 || j > len(matrix[i])-2 {
+		return 0
+	}
+
+	count := 0
+	if checkLeftMAS(i, j, matrix) {
+		count++
+	}
+	if checkRightMAS(i, j, matrix) {
+		count++
+	}
+	if checkTopMAS(i, j, matrix) {
+		count++
+	}
+	if checkBottomMAS(i, j, matrix) {
+		count++
+	}
+	return count
+}
+
+/*
+M.S
+.A.
+M.S
+*/
+func checkLeftMAS(i int, j int, matrix [][]string) bool {
+	// top left M
+	if matrix[i-1][j-1] != "M" {
+		return false
+	}
+	// top right S
+	if matrix[i-1][j+1] != "S" {
+		return false
+	}
+	// bottom left M
+	if matrix[i+1][j-1] != "M" {
+		return false
+	}
+	// bottom right S
+	if matrix[i+1][j+1] != "S" {
+		return false
+	}
+	return true
+}
+
+/*
+M.M
+.A.
+S.S
+*/
+func checkTopMAS(i int, j int, matrix [][]string) bool {
+	// top left M
+	if matrix[i-1][j-1] != "M" {
+		return false
+	}
+	// top right M
+	if matrix[i-1][j+1] != "M" {
+		return false
+	}
+	// bottom left S
+	if matrix[i+1][j-1] != "S" {
+		return false
+	}
+	// bottom right S
+	if matrix[i+1][j+1] != "S" {
+		return false
+	}
+	return true
+}
+
+/*
+S.M
+.A.
+S.M
+*/
+func checkRightMAS(i int, j int, matrix [][]string) bool {
+	// top left S
+	if matrix[i-1][j-1] != "S" {
+		return false
+	}
+	// top right M
+	if matrix[i-1][j+1] != "M" {
+		return false
+	}
+	// bottom left S
+	if matrix[i+1][j-1] != "S" {
+		return false
+	}
+	// bottom right M
+	if matrix[i+1][j+1] != "M" {
+		return false
+	}
+	return true
+}
+
+/*
+S.S
+.A.
+M.M
+*/
+func checkBottomMAS(i int, j int, matrix [][]string) bool {
+	// top left S
+	if matrix[i-1][j-1] != "S" {
+		return false
+	}
+	// top right S
+	if matrix[i-1][j+1] != "S" {
+		return false
+	}
+	// bottom left M
+	if matrix[i+1][j-1] != "M" {
+		return false
+	}
+	// bottom right M
+	if matrix[i+1][j+1] != "M" {
+		return false
+	}
+	return true
+}
+
+func checkAllXMAS(matrix [][]string) int {
 	count := 0
 	for i, row := range matrix {
 		for j, col := range row {
 			if col == "X" {
-				fmt.Println("checking... ", i, j)
+				// fmt.Println("checking... ", i, j)
 				count += checkXMAS(i, j, matrix)
-				fmt.Println("count...", count)
+				// fmt.Println("count...", count)
 			}
 		}
 	}
@@ -36,35 +172,35 @@ func checkAll(matrix [][]string) int {
 func checkXMAS(i int, j int, matrix [][]string) int {
 	count := 0
 	if checkLeft(i, j, matrix) {
-		fmt.Println("found left")
+		// fmt.Println("found left")
 		count++
 	}
 	if checkRight(i, j, matrix) {
-		fmt.Println("found right")
+		// fmt.Println("found right")
 		count++
 	}
 	if checkUp(i, j, matrix) {
-		fmt.Println("found up")
+		// fmt.Println("found up")
 		count++
 	}
 	if checkDown(i, j, matrix) {
-		fmt.Println("found down")
+		// fmt.Println("found down")
 		count++
 	}
 	if checkTopLeftDiagonal(i, j, matrix) {
-		fmt.Println("found top left")
+		// fmt.Println("found top left")
 		count++
 	}
 	if checkTopRightDiagonal(i, j, matrix) {
-		fmt.Println("found top right")
+		// fmt.Println("found top right")
 		count++
 	}
 	if checkBottomRightDiagonal(i, j, matrix) {
-		fmt.Println("found bottom right")
+		// fmt.Println("found bottom right")
 		count++
 	}
 	if checkBottomLeftDiagonal(i, j, matrix) {
-		fmt.Println("found bottom left")
+		// fmt.Println("found bottom left")
 		count++
 	}
 
