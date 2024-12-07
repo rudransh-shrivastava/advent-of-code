@@ -7,19 +7,55 @@ import (
 	"github.com/ryntak94/advent-of-code-go-starter/utils"
 )
 
-// Part 1: 1h 55m 51s ; Part 2:
+// Part 1: 1h 55m 51s ; Part 2: 16m 20s
+
 func main() {
 	file, err := utils.FileAsString("input.txt")
 	if err != nil {
 		fmt.Println(fmt.Errorf("input scanner: %w", err))
 	}
 	lab := parseStringTo2DList(file)
-	turn := "up"
-	walking := true
 	i, j := findStart(lab)
 	fmt.Println("found starting index: ", i, j)
 
+	_, _, walkedLab := walk(lab, i, j)
+	fmt.Println("Steps: ", countX(walkedLab)+1)
+
+	infiniteCount := 0
+	for row := 0; row < len(lab); row++ {
+		for col := 0; col < len(lab[0]); col++ {
+			newLab := deepCopy(lab)
+
+			newLab[row][col] = "#"
+			_, isInfinite, _ := walk(newLab, i, j)
+			if isInfinite {
+				infiniteCount++
+			}
+		}
+	}
+	fmt.Println("Infinite count: ", infiniteCount)
+}
+
+func deepCopy(lab [][]string) [][]string {
+	copyLab := make([][]string, len(lab))
+	for i := range lab {
+		copyLab[i] = make([]string, len(lab[i]))
+		copy(copyLab[i], lab[i])
+	}
+	return copyLab
+}
+
+func walk(lab [][]string, i, j int) (int, bool, [][]string) {
+	steps := 0
+	isInfiniteLoop := false
+	walking := true
+	turn := "up"
 	for walking {
+		steps++
+		if steps > len(lab)*len(lab[0])*3 {
+			isInfiniteLoop = true
+			return steps, isInfiniteLoop, lab
+		}
 		if turn == "up" {
 			if i > 0 && lab[i-1][j] != "#" {
 				lab[i][j] = "X"
@@ -54,8 +90,7 @@ func main() {
 			walking = false
 		}
 	}
-	lab[i][j] = "X"
-	fmt.Println(countX(lab))
+	return steps, isInfiniteLoop, lab
 }
 
 func moveUp(lab [][]string, i, j int) ([][]string, int, int, bool) {
