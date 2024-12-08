@@ -7,7 +7,7 @@ import (
 	"github.com/ryntak94/advent-of-code-go-starter/utils"
 )
 
-// Part 1 : 1h 07m 02s ; Part 2 :
+// Part 1 : 1h 07m 02s ; Part 2 : 14m 02s
 
 func main() {
 	file, err := utils.FileAsString("input.txt")
@@ -17,11 +17,64 @@ func main() {
 	puzzleMap := parseStringTo2DList(file)
 	uniqueChars := uniqueCharacters(puzzleMap)
 	// fmt.Println(uniqueChars)
-	antiNodeMap := createAntiNodes(puzzleMap, uniqueChars)
+	antiNodeMatrix := createAntiNodes(puzzleMap, uniqueChars)
 	// prettyPrint(antiNodeMap)
-	fmt.Println(countHashes(antiNodeMap))
+	fmt.Println(countHashes(antiNodeMatrix))
+	fullAntiNodeMatrix := createAllAntiNodes(puzzleMap, uniqueChars)
+	// prettyPrint(fullAntiNodeMatrix)
+	fmt.Println(countHashes(fullAntiNodeMatrix))
 }
 
+func createAllAntiNodes(matrix [][]string, uniqueChars []string) [][]string {
+	height := len(matrix)
+	width := len(matrix[0])
+
+	antiNodeMatrix := make([][]string, height)
+	for i := range antiNodeMatrix {
+		antiNodeMatrix[i] = make([]string, width)
+	}
+	for _, char := range uniqueChars {
+		// fmt.Println("for char: ", char)
+		for i := 0; i < height; i++ {
+			for j := 0; j < width; j++ {
+				if matrix[i][j] == char {
+					// fmt.Println("found char at ", i, j, matrix[i][j])
+					for k := 0; k < height; k++ {
+						for l := 0; l < width; l++ {
+							if matrix[k][l] == char {
+								if i == k && j == l {
+									antiNodeMatrix[i][j] = "#"
+									continue
+								}
+								// fmt.Println("found next char at: ", k, l, matrix[k][l])
+								h := k - i
+								w := l - j
+
+								x1 := i - h
+								y1 := j - w
+								x2 := k + h
+								y2 := l + w
+								for x1 >= 0 && x1 < height && y1 >= 0 && y1 < width {
+									// fmt.Println("plot 1: ", x1, y1)
+									antiNodeMatrix[x1][y1] = "#"
+									x1 -= h
+									y1 -= w
+								}
+								for x2 >= 0 && x2 < height && y2 >= 0 && y2 < width {
+									// fmt.Println("plot 2: ", x2, y2)
+									antiNodeMatrix[x2][y2] = "#"
+									x2 += h
+									y2 += w
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return antiNodeMatrix
+}
 func createAntiNodes(matrix [][]string, uniqueChars []string) [][]string {
 	height := len(matrix)
 	width := len(matrix[0])
@@ -108,6 +161,13 @@ func uniqueCharacters(matrix [][]string) []string {
 
 func prettyPrint(matrix [][]string) {
 	for _, row := range matrix {
-		fmt.Println(row)
+		for _, char := range row {
+			if char == "" {
+				fmt.Print(" ")
+			} else {
+				fmt.Print(char)
+			}
+		}
+		fmt.Println()
 	}
 }
