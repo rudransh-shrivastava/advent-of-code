@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/ryntak94/advent-of-code-go-starter/utils"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/ryntak94/advent-of-code-go-starter/utils"
 )
 
 func main() {
