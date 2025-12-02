@@ -10,6 +10,7 @@ fn main() {
     };
     let ranges_pair: Vec<&str>= input.split(",").collect();
     let part_one_answer = part_one(ranges_pair.clone());
+    println!("------------------------------");
     let part_two_answer = part_two(ranges_pair.clone());
 
     println!("Part One: {part_one_answer}");
@@ -50,13 +51,20 @@ fn part_one(ranges_pair: Vec<&str>) -> i64 {
 
 fn is_invalid_part_two(num: String) -> bool {
     let length = num.len();
-    if length % 2 != 0 {
-        return false
+    for i in 1..length {
+        let parts: Vec<&str> = num.as_bytes()
+            .chunks(i)
+            .map(str::from_utf8)
+            .collect::<Result<Vec<&str>, _>>()
+            .unwrap();
+        // now check if all parts are same
+        let first_element = &parts[0];
+        if parts.iter().all(|element| element == first_element) {
+            return true
+        }
     }
-    let mid = length / 2;
-    let mut first = num; 
-    let second = first.split_off(mid); // mid would be the start index for second substr (returned)
-    return first == second
+
+    return false
 }
 
 fn part_two(ranges_pair: Vec<&str>) -> i64 {
@@ -72,6 +80,7 @@ fn part_two(ranges_pair: Vec<&str>) -> i64 {
         let second: i64 = range[1].parse().unwrap();
         for i in first..second + 1 {
             if is_invalid_part_two(i.to_string()) {
+                println!("invalid found: {i}");
                 sum += i;
             }
         }
