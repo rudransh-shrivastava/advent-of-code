@@ -11,45 +11,30 @@ fn main() {
     let batteries: Vec<&str>= input.split("\n").collect();
     let part_one_answer = part_one(batteries.clone());
     println!("------------------------------");
+    let part_two_answer = part_two(batteries.clone());
 
     println!("Part One: {part_one_answer}");
+    println!("Part Two: {part_two_answer}");
 }
 
-fn make_joltage(battery: &str) -> u32 {
-    let mut highest_num: u32 = 0;
-    let mut highest_num_index: u32 = 0;
-    for (i, b) in battery.char_indices() {
-        let number = b.to_digit(10).unwrap();
-        if number > highest_num {
-            highest_num_index = i as u32;
-            highest_num = b.to_digit(10).unwrap();
-        }
-    }
-
-    let mut second_highest_num: u32 = 0;
-    let mut second_highest_num_index: u32 = 0;
-    for (i, b) in battery.char_indices() {
-        let number = b.to_digit(10).unwrap();
-        if number > second_highest_num && i as u32 != highest_num_index {
-            second_highest_num_index = i as u32;
-            second_highest_num = b.to_digit(10).unwrap();
-        }
-    }
-    if highest_num_index > second_highest_num_index {
-        let mut max_joltage = second_highest_num * 10 + highest_num;
-        for (i, b) in battery.char_indices() {
-            if (i as u32) <= highest_num_index {
-                continue;
-            }
-            let number = b.to_digit(10).unwrap();
-            let current_joltate = highest_num * 10 + number;
-            if current_joltate > max_joltage {
-                max_joltage = current_joltate;
-            }
-        }
-        return max_joltage
+fn make_joltage(battery: &str, n: i32, index: usize, number: i64) -> i64 {
+    if index >= battery.len() {
+        if n == 0 {
+            return number;
+        } 
+        return 0;
     } 
-    return highest_num * 10 + second_highest_num;
+    if n == 0 {
+        return number;
+    }
+    let take_num = (battery.as_bytes()[index] as char).to_digit(10).unwrap();
+    let take = make_joltage(battery, n-1, index+1, number*10 + (take_num as i64));
+    let no_take = make_joltage(battery, n, index+1, number);
+
+    if take > no_take {
+        return take
+    }
+    return no_take
 }
 
 fn part_one(batteries: Vec<&str>) -> i64 {
@@ -58,10 +43,23 @@ fn part_one(batteries: Vec<&str>) -> i64 {
         if battery.is_empty() {
             continue
         };
-        let joltage = make_joltage(&battery) as i64;
+        let joltage = make_joltage(&battery, 2, 0, 0);
         println!("battery: {battery} | joltage: {joltage}");
         sum += joltage;
     }
     return sum
 }
 
+fn part_two(batteries: Vec<&str>) -> i64 {
+    let mut sum: i64 = 0;
+    for battery in batteries.iter() {
+        if battery.is_empty() {
+            continue
+        };
+        println!("battery: {battery}");
+        let joltage = make_joltage(&battery, 12, 0, 0);
+        println!("joltage: {joltage} \n");
+        sum += joltage;
+    }
+    return sum
+}
