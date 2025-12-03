@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = match fs::read_to_string("input.txt") {
+    let input = match fs::read_to_string("day01/input.txt") {
         Ok(input) => input,
         Err(_) => {
             println!("couldn't read input.txt");

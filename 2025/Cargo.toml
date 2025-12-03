@@ -8,3 +8,10 @@ edition = "2024"
 [[bin]]
 name = "advent-of-code-2025-rust"
 path = "main.rs"
+
+[workspace]
+members = [
+    "day01",
+    "day02",
+    "day03"
+]
