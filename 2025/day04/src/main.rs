@@ -17,8 +17,10 @@ fn main() {
 
     let part_one_answer = part_one(&matrix);
     println!("------------------------------");
+    let part_two_answer = part_two(&matrix);
 
     println!("Part One: {part_one_answer}");
+    println!("Part Two: {part_two_answer}");
 }
 
 fn is_accessible(matrix: &Vec<Vec<char>>, x: i32, y: i32) -> bool {
@@ -63,6 +65,35 @@ fn part_one(matrix: &Vec<Vec<char>>) -> i64 {
                     sum += 1
                 }
             }
+        }
+    }
+    return sum
+}
+
+fn part_two(m: &Vec<Vec<char>>) -> i64 {
+    let mut sum: i64 = 0;
+    let mut matrix = m.clone();
+    let mut prev_ans = 0;
+    loop {
+        let mut coords: Vec<(usize, usize)> = Vec::new();
+        for x in 0..matrix.len() {
+            for y in 0..matrix[x].len() {
+                if matrix[x][y] == '@' {
+                    println!("testing: {x}, {y}");
+                    if is_accessible(&matrix, x as i32, y as i32)  {
+                        println!("accessible!");
+                        coords.push((x, y));
+                        sum += 1
+                    }
+                }
+            }
+        }
+        if sum == prev_ans {
+            break;
+        }
+        prev_ans = sum;
+        for coord in coords {
+            matrix[coord.0][coord.1] = '.';
         }
     }
     return sum
