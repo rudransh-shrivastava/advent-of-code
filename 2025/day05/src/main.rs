@@ -14,7 +14,8 @@ fn main() {
             println!("couldn't read ranges file");
             return;
         },
-    }; let mut ranges: Vec<(i64,i64)> = Vec::new();
+    }; 
+    let mut ranges: Vec<(i64,i64)> = Vec::new();
     for range in input_ranges.lines() {
         let pair: Vec<&str> = range.split("-").collect();
         let first: i64 = pair[0].parse().unwrap();
