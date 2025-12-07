@@ -49,11 +49,13 @@ fn main() {
         }
         println!();
     }
-    let part_two_answer = count_timelines(&part_two_matrix, start_pos);
+    let mut cache: Vec<Vec<i64>> = vec![vec![-1; part_two_matrix[0].len()]; part_two_matrix.len()];
+    let part_two_answer = count_timelines(&part_two_matrix, start_pos, &mut cache);
     println!("------------------------------");
     println!("Part One: {part_one_answer}");
     println!("Part Two: {part_two_answer}");
 }
+
 /// start_pos: (col, row)
 fn start_beam(matrix: &mut Vec<Vec<char>>, start_pos: (usize, usize)) -> i64 {
     let mut count = 0;
@@ -81,15 +83,26 @@ fn start_beam(matrix: &mut Vec<Vec<char>>, start_pos: (usize, usize)) -> i64 {
     }
     return count;
 }
-fn count_timelines(matrix: &Vec<Vec<char>>, start_pos: (usize, usize)) -> i64 {
+
+/// start_pos: (col, row)
+fn count_timelines(
+    matrix: &Vec<Vec<char>>,
+    start_pos: (usize, usize),
+    cache: &mut Vec<Vec<i64>>,
+) -> i64 {
     for col in start_pos.0..matrix.len() {
         if matrix[col][start_pos.1] == '^' {
-            let (left_count, right_count) = rayon::join(
-                || count_timelines(matrix, (col, start_pos.1 + 1)),
-                || count_timelines(matrix, (col, start_pos.1 - 1)),
-            );
-            return left_count + right_count;
+            let mut timelines = 0;
+            let cached = cache[col][start_pos.1];
+            if cached != -1 {
+                timelines += cached;
+            } else {
+                timelines += count_timelines(matrix, (col, start_pos.1 + 1), cache);
+                timelines += count_timelines(matrix, (col, start_pos.1 - 1), cache);
+            }
+            cache[col][start_pos.1] = timelines;
+            return timelines;
         }
     }
-    return 1;
+    1
 }
