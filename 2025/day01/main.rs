@@ -6,7 +6,7 @@ fn main() {
         Err(_) => {
             println!("couldn't read input.txt");
             return;
-        },
+        }
     };
     let parts: Vec<&str> = input.split("\n").collect();
     let part_one_answer = part_one(&parts);
@@ -16,8 +16,8 @@ fn main() {
 }
 
 fn part_one(parts: &Vec<&str>) -> i32 {
-    let mut answer = 0; 
-    let mut current_dial: i32 = 50; 
+    let mut answer = 0;
+    let mut current_dial: i32 = 50;
 
     for part in parts.iter() {
         if current_dial == 0 {
@@ -38,14 +38,13 @@ fn part_one(parts: &Vec<&str>) -> i32 {
         } else if direction == 'L' {
             current_dial = (current_dial - step) % 100;
         }
-
     }
     return answer;
 }
 
 fn part_two(parts: &Vec<&str>) -> i32 {
-    let mut answer = 0; 
-    let mut current_dial: i32 = 50; 
+    let mut answer = 0;
+    let mut current_dial: i32 = 50;
 
     for part in parts.iter() {
         if part.is_empty() {
@@ -60,7 +59,7 @@ fn part_two(parts: &Vec<&str>) -> i32 {
         };
         let step: i32 = part[1..].trim().parse().expect("should've been a number");
 
-        for _ in 1..step+1 {
+        for _ in 1..step + 1 {
             if direction == 'R' {
                 current_dial = (current_dial + 1) % 100;
             }
@@ -73,5 +72,4 @@ fn part_two(parts: &Vec<&str>) -> i32 {
         }
     }
     return answer;
-
 }

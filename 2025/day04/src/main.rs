@@ -1,13 +1,12 @@
 use std::{fs, usize};
 
-
 fn main() {
     let input = match fs::read_to_string("day04/src/input.txt") {
         Ok(input) => input,
         Err(_) => {
             println!("couldn't read file");
             return;
-        },
+        }
     };
     let mut matrix: Vec<Vec<char>> = Vec::new();
     for row in input.lines() {
@@ -26,32 +25,32 @@ fn main() {
 fn is_accessible(matrix: &Vec<Vec<char>>, x: i32, y: i32) -> bool {
     let mut threshold = 0;
     let directions: Vec<(i32, i32)> = vec![
-        (-1, -1), 
-        (0, -1), 
-        (1, -1), 
-        (1, 0), 
-        (1, 1), 
-        (0, 1), 
-        (-1, 1), 
-        (-1, 0), 
+        (-1, -1),
+        (0, -1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+        (0, 1),
+        (-1, 1),
+        (-1, 0),
     ];
     for direction in directions {
         let new_x = x + direction.0;
         let new_y = y + direction.1;
         if new_x < 0 || matrix.len() as i32 <= new_x {
-            continue
+            continue;
         }
         if new_y < 0 || matrix[0].len() as i32 <= new_y {
-            continue
+            continue;
         }
         if matrix[new_x as usize][new_y as usize] == '@' {
             threshold += 1;
         }
-    } 
-    if threshold < 4 {
-        return true
     }
-    return false
+    if threshold < 4 {
+        return true;
+    }
+    return false;
 }
 
 fn part_one(matrix: &Vec<Vec<char>>) -> i64 {
@@ -60,14 +59,14 @@ fn part_one(matrix: &Vec<Vec<char>>) -> i64 {
         for y in 0..matrix[x].len() {
             if matrix[x][y] == '@' {
                 println!("testing: {x}, {y}");
-                if is_accessible(matrix, x as i32, y as i32)  {
+                if is_accessible(matrix, x as i32, y as i32) {
                     println!("accessible!");
                     sum += 1
                 }
             }
         }
     }
-    return sum
+    return sum;
 }
 
 fn part_two(m: &Vec<Vec<char>>) -> i64 {
@@ -80,7 +79,7 @@ fn part_two(m: &Vec<Vec<char>>) -> i64 {
             for y in 0..matrix[x].len() {
                 if matrix[x][y] == '@' {
                     println!("testing: {x}, {y}");
-                    if is_accessible(&matrix, x as i32, y as i32)  {
+                    if is_accessible(&matrix, x as i32, y as i32) {
                         println!("accessible!");
                         coords.push((x, y));
                         sum += 1
@@ -96,5 +95,5 @@ fn part_two(m: &Vec<Vec<char>>) -> i64 {
             matrix[coord.0][coord.1] = '.';
         }
     }
-    return sum
+    return sum;
 }
