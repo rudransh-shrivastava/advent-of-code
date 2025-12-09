@@ -33,8 +33,56 @@ fn main() {
     }
 
     let distances = make_distance_list(&boxes);
-    let len = boxes.len();
+    let part_one_answer = part_one(&boxes, &distances, pop_count);
+    let part_two_answer = part_two(&boxes, &distances);
 
+    println!("\n------------------------------");
+    println!("Part One: {part_one_answer}");
+    println!("Part Two: {part_two_answer}");
+}
+fn part_two(boxes: &Vec<&str>, distances: &Vec<(f32, usize, usize)>) -> i64 {
+    let len = boxes.len();
+    let mut union_find = UnionFind::new(len);
+    let mut last_connection = (0, 0);
+
+    for d in distances {
+        if union_find.find(d.1) == union_find.find(d.2) {
+            continue;
+        }
+        union_find.union(d.1, d.2);
+        last_connection = (d.1, d.2);
+
+        let root = union_find.find(0);
+        let mut all_connected = true;
+        for idx in 1..len {
+            if union_find.find(idx) != root {
+                all_connected = false;
+                break;
+            }
+        }
+
+        if all_connected {
+            break;
+        }
+    }
+
+    let box_a = boxes[last_connection.0];
+    let box_b = boxes[last_connection.1];
+    let x_a: i64 = box_a.split(",").next().unwrap().trim().parse().unwrap();
+    let x_b: i64 = box_b.split(",").next().unwrap().trim().parse().unwrap();
+
+    let result = x_a * x_b;
+    println!(
+        "Last connection: box {} ({}) and box {} ({})",
+        last_connection.0, box_a, last_connection.1, box_b
+    );
+    println!("X coordinates: {} * {} = {}", x_a, x_b, result);
+
+    result
+}
+
+fn part_one(boxes: &Vec<&str>, distances: &Vec<(f32, usize, usize)>, pop_count: usize) -> i64 {
+    let len = boxes.len();
     let mut counter = 0;
     let mut union_find = UnionFind::new(len);
     for d in distances {
@@ -58,12 +106,12 @@ fn main() {
     let mut sizes: Vec<usize> = map.values().map(|v| v.len()).collect();
     sizes.sort_by(|a, b| b.cmp(a));
 
-    let result = sizes[0] * sizes[1] * sizes[2];
-    println!("\n------------------------------");
+    let result: i64 = sizes[0] as i64 * sizes[1] as i64 * sizes[2] as i64;
     println!(
         "Top 3 sizes: {} * {} * {} = {}",
         sizes[0], sizes[1], sizes[2], result
     );
+    result
 }
 
 struct UnionFind {
